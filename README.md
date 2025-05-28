@@ -41,36 +41,40 @@
 **🧪 Пример запуска**
 
 ```python
-from simulation import simulate_cell_with_proteins_and_rna
-
-df = simulate_cell_with_proteins_and_rna(
-    ticks=250,
+df, all_genes = run_simulation(
+    ticks=500,
     initial_food=1.0,
-    initial_energy=1.0,
-    energy_cost=0.003,
+    initial_energy=0,
+    energy_cost=0.002,
+    mutation_chance=0.0001,
+    cellular_products={
+    },
     toxins={
-        "Energotoxin": (-1, ("energy", 0.3)),
-        "RNAtoxin": (0, ("TPM", 0.0))
+        "Energotoxin": (2, ("energy", 0.001))
     },
     receptors={
-        "ENGSENS": (12, "qual", "av", "av", ["DIVISION == 'inactive'"], ["DIVISION == 'active'"], False),
-        "FOODSENS": (4, "qual", "av", "av", ["Energy <= 1", "KINA1 == 'active'"], ["Energy >= 2", "DIVISION == 'active'"], False),
+        "ENGSENS":   (12, "qual", "st", "av", ["DIVISION == 'inactive'"], ["DIVISION == 'active'"], False),
+        "FOODSENS":  (4,  "qual", "av", "av", ["Energy <= 1", "KINFEED == 'active'"], ["Energy >= 2", "DIVISION == 'active'"], False),
+        "MUTSENS":    (2, "qual", "st", "av", ["ENGSENS == 'active'"], ["DIVISION == 'active'"], ("mutsens", 1)),
+        "TOXSENS":  (2,  "qual", "av", "av", ["DIVISION == 'inactive'"], ["Toxin < -2.9", "DIVISION == 'active'"], ("toxsens", 0.1)),
     },
     metabolism={
-        "HARVEST": (2, "quan", "st", "st", ["Food <= 1", "FOODSENS == 'active'"], ["Energy >= 2", "Energy <= -2.9", "DIVISION == 'active'"], ("energy", 0.008)),
+        "HARVEST":   (2,  "quan", "av", "av", ["Energy <= 0", "FOODSENS == 'active'"], ["Energy >= 2", "Energy <= -2.9", "DIVISION == 'active'"], ("energy", 0.1)),
+        "FEED":   (2,  "quan", "av", "av", ["Energy <= -2"], ["Energy >= 2", "DIVISION == 'active'"], ("energy", 0.1)),
+        "DETOX":   (2,  "quan", "av", "av", ["Toxin_detected == True"], ["Toxin < -2.9", "DIVISION == 'active'"], ("detox", 0.01))
     },
     kinases={
-        "KINA1": (3, "qual", "st", "wk", ["Energy <= 1", "ENGSENS == 'active'"], ["Energy > -1", "DIVISION == 'active'"], False),
+        "KINFEED":     (3, "qual", "av", "wk", ["Energy <= 1", "ENGSENS == 'active'"], ["Energy > 0.5", "DIVISION == 'active'"], False),
     },
     cell_cycle={
-        "CDK1": (3, "qual", "wk", "wk", ["Energy >= 1.5"], ["DIVISION == 'active'"], False),
+        "CDK1":      (3,  "qual", "av", "wk", ["Energy >= 1"], ["DIVISION == 'active'"], False),
     },
     division={
-        "DIVISION": (15, "qual", "av", "av", ["CDK1 == 'active'"], ["DIVISION == 'active'"], ("div", 1)),
+        "MUTGUARD":  (2, "qual", "st", "av", ["DIVISION == 'inactive'"], ["DIVISION == 'active'"], ("mutrep", 1)),
+        "DIVISION":  (12, "qual", "av", "av", ["CDK1 == 'active'"], ["DIVISION == 'active'"], ("div", 1)),
     }
 )
-
-print(df.head())
+print(df.head(5))
 ```
 
 **📊 Визуализация**
