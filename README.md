@@ -57,14 +57,14 @@
 
 ```python
 df, all_genes = run_simulation(
-    ticks=3000,
-    initial_food=1.0,
-    initial_energy=0,
-    initial_cell_num=10,
-    support_cell_num=1000,
-    energy_cost=0.002,
-    mutation_chance=0.0001,
-    protein_stability=0.5,
+    ticks=3000,             # количество тактов симуляции (максимум 3000 шагов)
+    initial_food=1.0,       # начальный уровень «еды» в окружении
+    initial_energy=0.0,     # начальное количество энергии внутри клетки
+    initial_cell_num=10,    # стартовое число клеток в популяции
+    support_cell_num=1000,  # «ёмкость» среды: максимальное число клеток при комфортном обеспечении "едой"
+    energy_cost=0.002,      # стоимость каждой единицы транскрипта (TPM) в энергии
+    mutation_chance=0.0001, # вероятность случайной мутации каждого гена за такт
+    protein_stability=0.5,  # базовый коэффициент стабилизации всех белков (0.0…1.0)
     cellular_products={
     },
     toxins={
